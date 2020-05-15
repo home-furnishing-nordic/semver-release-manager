@@ -1,0 +1,22 @@
+name: 'Release Manager'
+description: 'Automate your releases at github'
+inputs:
+  github_token:
+    description: 'Github access token'
+    required: true
+    default: ''
+  bump_type:
+    description: 'Which bump type to use (default: `patch`)'
+    required: false
+    default: 'patch'
+outputs:
+  time: # id of output
+    description: 'The time when was triggered'
+  new_tag: # id of output
+    description: 'Generated tag'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+    icon: "git-merge"
+    color: "purple"

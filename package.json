@@ -1,0 +1,25 @@
+{
+  "name": "releaseManager",
+  "version": "1.0.0",
+  "description": "releaseManager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikrafizik/releaseManager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mikrafizik/releaseManager/issues"
+  },
+  "homepage": "https://github.com/mikrafizik/releaseManager#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^2.2.0"
+  }
+}
