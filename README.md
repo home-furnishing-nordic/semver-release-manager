@@ -21,7 +21,7 @@ jobs:
     steps:
     - name: Generate release
       id: release
-      uses: mikrafizik/releaseManager@master
+      uses: home-furnishing-nordic/semver-release-manager@master
       with:
         # secret github token, required
         github_token: "${{ secrets.GITHUB_TOKEN }}"
