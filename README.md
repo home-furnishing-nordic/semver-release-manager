@@ -1,6 +1,6 @@
-# GitHub Release Manager
+# GitHub Semver Release Manager
 
-A Github Action to automatically bump tag version and generate release on your masters branch, on merge, with the latest SemVer formatted version.
+A Github Action to automatically bump tag version and generate release on your master branch on each commit with the latest SemVer formatted version.
 
 ## Usage
 
