@@ -1,4 +1,4 @@
-name: 'Release Manager'
+name: 'Semver Release Manager'
 description: 'Automate your releases at github'
 inputs:
   github_token:
