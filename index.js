@@ -7,8 +7,8 @@ async function run() {
         const repo = context.repo.repo;
         const owner = context.repo.owner;
         const time = (new Date()).toISOString();
-
         const {GITHUB_REF, GITHUB_SHA} = process.env;
+
         if (!GITHUB_REF) {
             core.setFailed("Missing GITHUB_REF");
             return;
@@ -21,11 +21,10 @@ async function run() {
 
         const octokit = new GitHub(token);
 
-        core.debug(`Start generating tag`);
+        core.info(`Start generating tag`);
         const {lastTag, newTag, preRelease} = await generateTag(octokit, repo, owner);
 
-        core.debug(`Start fetching commits`);
-        // TODO pagination and filters
+        core.info(`Start fetching commits`);
         const {data: commits} = await octokit.repos.listCommits({
             owner,
             repo,
@@ -33,8 +32,7 @@ async function run() {
 
         const message = getMessage(commits, lastTag);
 
-        // throw new Error('SHIT IS GOING HERE');
-        core.debug(`Creating Tag: ${newTag}`);
+        core.info(`Creating Tag: ${newTag}`);
         const tag = await octokit.git.createTag({
             ...context.repo,
             tag: newTag,
@@ -48,14 +46,14 @@ async function run() {
             }
         });
 
-        core.debug(`Creating reference for Tag: ${newTag}`);
+        core.info(`Creating reference for Tag: ${newTag}`);
         await octokit.git.createRef({
             ...context.repo,
             ref: `refs/tags/${newTag}`,
             sha: tag.data.sha,
         });
 
-        core.debug(`Creating release with Tag: ${newTag}`);
+        core.info(`Creating release with Tag: ${newTag}`);
         await octokit.repos.createRelease({
             owner,
             repo,
@@ -73,13 +71,17 @@ async function run() {
 }
 
 function getMessage(commits, lastTag) {
+    core.info('Generating message');
+
     const commitMessages = [];
+
     for (let i = 0; i < commits.length; i++) {
         const c = commits[i];
-        if (c.sha === lastTag.commit.sha) {
 
+        if (c.sha === lastTag.commit.sha) {
             break;
         }
+
         const message = c.commit.message;
 
         if (message.startsWith('Merge', 0)) {
@@ -134,24 +136,33 @@ function bumpVersionTokens(tokens, type = null) {
             return bumpVersionTokens(tokens, defaultType);
     }
 
+    core.info('Bumping version. Selected type: ' + type);
+
     return tokens;
 }
 
 async function generateTag(octokit, repo, owner) {
+    core.info('Retrieve list of tags');
     const {data: listTags} = await octokit.repos.listTags({
         owner,
         repo,
     });
 
+    let defaultTag = null;
     let lastTag = listTags[0];
+
     //init first tag
     if (!lastTag) {
+        defaultTag = core.getInput('start_from_version');
         lastTag = {
-            name: 'v0.0.0',
+            name: defaultTag,
             commit: {
                 sha: null,
             }
         };
+        core.info('There are no tags found, using init tag: ' + defaultTag);
+    } else {
+        core.info('Last tag info received: ' + listTag.name);
     }
 
     let dirtname = lastTag.name;
@@ -166,12 +177,17 @@ async function generateTag(octokit, repo, owner) {
         bumpType = bumpType[0].substring(9);
     }
 
-    const tokens = bumpVersionTokens(dirtname.split('.'), bumpType);
-    const newTag = 'v' + tokens.join('.');
+    let tokens = dirtname.split('.');
+    // bump tag version
+    if (!defaultTag) {
+        const tokens = bumpVersionTokens(dirtname.split('.'), bumpType);
+    }
 
     // check first symbol after v in
     const preRelease = '0' === tokens[0];
+    const newTag = 'v' + tokens.join('.');
 
+    core.info('New tag is: ' + newTag);
     return {
         preRelease,
         newTag,
