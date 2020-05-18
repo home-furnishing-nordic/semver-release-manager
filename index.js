@@ -21,10 +21,10 @@ async function run() {
 
         const octokit = new GitHub(token);
 
-        core.info(`Start generating tag`);
+        console.log(`Start generating tag`);
         const {lastTag, newTag, preRelease} = await generateTag(octokit, repo, owner);
 
-        core.info(`Start fetching commits`);
+        console.log(`Start fetching commits`);
         const {data: commits} = await octokit.repos.listCommits({
             owner,
             repo,
@@ -32,7 +32,7 @@ async function run() {
 
         const message = getMessage(commits, lastTag);
 
-        core.info(`Creating Tag: ${newTag}`);
+        console.log(`Creating Tag: ${newTag}`);
         const tag = await octokit.git.createTag({
             ...context.repo,
             tag: newTag,
@@ -46,14 +46,14 @@ async function run() {
             }
         });
 
-        core.info(`Creating reference for Tag: ${newTag}`);
+        console.log(`Creating reference for Tag: ${newTag}`);
         await octokit.git.createRef({
             ...context.repo,
             ref: `refs/tags/${newTag}`,
             sha: tag.data.sha,
         });
 
-        core.info(`Creating release with Tag: ${newTag}`);
+        console.log(`Creating release with Tag: ${newTag}`);
         await octokit.repos.createRelease({
             owner,
             repo,
@@ -71,7 +71,7 @@ async function run() {
 }
 
 function getMessage(commits, lastTag) {
-    core.info('Generating message');
+    console.log('Generating message');
 
     const commitMessages = [];
 
@@ -136,13 +136,13 @@ function bumpVersionTokens(tokens, type = null) {
             return bumpVersionTokens(tokens, defaultType);
     }
 
-    core.info('Bumping version. Selected type: ' + type);
+    console.log('Bumping version. Selected type: ' + type);
 
     return tokens;
 }
 
 async function generateTag(octokit, repo, owner) {
-    core.info('Retrieve list of tags');
+    console.log('Retrieve list of tags');
     const {data: listTags} = await octokit.repos.listTags({
         owner,
         repo,
@@ -160,9 +160,9 @@ async function generateTag(octokit, repo, owner) {
                 sha: null,
             }
         };
-        core.info('There are no tags found, using init tag: ' + defaultTag);
+        console.log('There are no tags found, using init tag: ' + defaultTag);
     } else {
-        core.info('Last tag info received: ' + listTag.name);
+        console.log('Last tag info received: ' + listTag.name);
     }
 
     let dirtname = lastTag.name;
@@ -187,7 +187,7 @@ async function generateTag(octokit, repo, owner) {
     const preRelease = '0' === tokens[0];
     const newTag = 'v' + tokens.join('.');
 
-    core.info('New tag is: ' + newTag);
+    console.log('New tag is: ' + newTag);
     return {
         preRelease,
         newTag,
