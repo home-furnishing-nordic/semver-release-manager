@@ -1,22 +1,22 @@
 {
-  "name": "releaseManager",
-  "version": "1.0.0",
-  "description": "releaseManager",
+  "name": "semver-release-manager",
+  "version": "1.0.1",
+  "description": "semver-release-manager",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mikrafizik/releaseManager.git"
+    "url": "git+https://github.com/home-furnishing-nordic/semver-release-manager.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mikrafizik/releaseManager/issues"
+    "url": "https://github.com/home-furnishing-nordic/semver-release-manager/issues"
   },
-  "homepage": "https://github.com/mikrafizik/releaseManager#readme",
+  "homepage": "https://github.com/home-furnishing-nordic/semver-release-manager#readme",
   "dependencies": {
     "@actions/core": "^1.2.4",
     "@actions/exec": "^1.0.4",
