@@ -112,7 +112,7 @@ function bumpVersionTokens(tokens, type = null) {
     }
 
     const defaultType = core.getInput('bump_type');
-    if (!['major', 'minor', 'patch'].includes(defaultType)) {
+    if (!['major', 'minor', 'patch', 'none'].includes(defaultType)) {
         throw new Error('Invalid default bump type')
     }
 
@@ -132,6 +132,8 @@ function bumpVersionTokens(tokens, type = null) {
             tokens[2] = 1 + parseInt(tokens[2]);
 
             break;
+        case 'none':
+            break
         default:
             return bumpVersionTokens(tokens, defaultType);
     }
