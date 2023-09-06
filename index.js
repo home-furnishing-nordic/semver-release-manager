@@ -33,24 +33,18 @@ async function run() {
         const message = getMessage(commits, lastTag);
 
         console.log(`Creating Tag: ${newTag}`);
-        let tag;
-        try {
-            tag = await octokit.git.createTag({
-                ...context.repo,
-                tag: newTag,
-                object: GITHUB_SHA,
-                message: message,
-                type: 'commit',
-                tagger: {
-                    name: context.payload.pusher.name,
-                    email: context.payload.pusher.email,
-                    date: time,
-                }
-            });
-        } catch(e) {
-            console.log(context);
-            throw e;
-        }
+        const tag = await octokit.git.createTag({
+            ...context.repo,
+            tag: newTag,
+            object: GITHUB_SHA,
+            message: message,
+            type: 'commit',
+            tagger: {
+                name: context.payload.pusher.name,
+                email: context.payload.pusher.email,
+                date: time,
+            }
+        });
 
         console.log(`Creating reference for Tag: ${newTag}`);
         await octokit.git.createRef({
@@ -69,6 +63,7 @@ async function run() {
             prerelease: preRelease,
         });
 
+        core.set
         core.setOutput("new_tag", newTag);
         core.setOutput("time", time);
     } catch (error) {
@@ -104,6 +99,8 @@ function bumpVersionTokens(tokens, type = null) {
     if (!tokens instanceof Array) {
         throw new Error('Bumps only array tokens');
     }
+
+    console.log('Bumping version tokens from: ' + tokens.join('.'));
 
     if (typeof tokens[0] == "undefined") {
         throw new Error('Major token undefined')
@@ -144,8 +141,7 @@ function bumpVersionTokens(tokens, type = null) {
             return bumpVersionTokens(tokens, defaultType);
     }
 
-    console.log('Bumping version. Selected type: ' + type);
-
+    console.log('Bumping version using '+type+', to '+tokens.join('.'));
     return tokens;
 }
 
@@ -181,11 +177,12 @@ async function generateTag(octokit, repo, owner) {
 
     let bumpType;
     try {
-        bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
+        bumpType = context.payload.head_commit.message.match(/#release-\w+/gm);
     } catch (e) {
-        console.log("ERROR: The event data given to the action by Github didn't contain `head_commit`. This action should only be used on pull requests.");
-        throw e;
+        console.log('No "head_commit" in event.This is likely die to the event not being a PR, but something else');
+        throw e
     }
+
     if (bumpType instanceof Array) {
         //remove #release-  part
         bumpType = bumpType[0].substring(9);
@@ -194,7 +191,7 @@ async function generateTag(octokit, repo, owner) {
     let tokens = dirtname.split('.');
     // bump tag version
     if (!defaultTag) {
-        const tokens = bumpVersionTokens(dirtname.split('.'), bumpType);
+        tokens = bumpVersionTokens(dirtname.split('.'), bumpType);
     }
 
     // check first symbol after v in
@@ -209,5 +206,11 @@ async function generateTag(octokit, repo, owner) {
     }
 }
 
-console.log("Start up recieved");
-run();
+console.log("Start up received");
+try {
+    run();
+} catch (e) {
+    console.log(e);
+    console.log(e.stack);
+    throw e;
+}

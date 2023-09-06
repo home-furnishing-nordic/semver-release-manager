@@ -96910,24 +96910,18 @@ async function run() {
         const message = getMessage(commits, lastTag);
 
         console.log(`Creating Tag: ${newTag}`);
-        let tag;
-        try {
-            tag = await octokit.git.createTag({
-                ...context.repo,
-                tag: newTag,
-                object: GITHUB_SHA,
-                message: message,
-                type: 'commit',
-                tagger: {
-                    name: context.payload.pusher.name,
-                    email: context.payload.pusher.email,
-                    date: time,
-                }
-            });
-        } catch(e) {
-            console.log(context);
-            throw e;
-        }
+        const tag = await octokit.git.createTag({
+            ...context.repo,
+            tag: newTag,
+            object: GITHUB_SHA,
+            message: message,
+            type: 'commit',
+            tagger: {
+                name: context.payload.pusher.name,
+                email: context.payload.pusher.email,
+                date: time,
+            }
+        });
 
         console.log(`Creating reference for Tag: ${newTag}`);
         await octokit.git.createRef({
@@ -96946,6 +96940,7 @@ async function run() {
             prerelease: preRelease,
         });
 
+        core.set;
         core.setOutput("new_tag", newTag);
         core.setOutput("time", time);
     } catch (error) {
@@ -97089,12 +97084,6 @@ async function generateTag(octokit, repo, owner) {
 }
 
 console.log("Start up received");
-try {
-    run();
-} catch (e) {
-    console.log(e);
-    console.log(e.stack);
-    throw e;
-}
+run();
 
 module.exports = semverReleaseManager;
