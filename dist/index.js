@@ -96998,6 +96998,7 @@ function bumpVersionTokens(tokens, type = null) {
     if (!['major', 'minor', 'patch', 'none'].includes(defaultType)) {
         throw new Error('Invalid default bump type')
     }
+    console.log("Bump type is ".concat(type));
 
     switch (type) {
         case 'major':
@@ -97059,12 +97060,11 @@ async function generateTag(octokit, repo, owner) {
     var bumpType;
     try {
         bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
-        console.log(bumpType);
+        console.log(context.payload.head_commit.message);
     } catch (e) {
         console.log("ERROR: The event data given to the action by Github didn't contain `head_commit`. This action should only be used on pull requests.");
         throw e;
     }
-    console.log(bumpType);
     if (bumpType instanceof Array) {
         //remove #release-  part
         bumpType = bumpType[0].substring(9);
