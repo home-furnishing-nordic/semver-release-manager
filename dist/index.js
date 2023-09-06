@@ -96910,8 +96910,9 @@ async function run() {
         const message = getMessage(commits, lastTag);
 
         console.log(`Creating Tag: ${newTag}`);
+        let tag;
         try {
-            const tag = await octokit.git.createTag({
+            tag = await octokit.git.createTag({
                 ...context.repo,
                 tag: newTag,
                 object: GITHUB_SHA,
