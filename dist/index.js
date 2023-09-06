@@ -97059,6 +97059,7 @@ async function generateTag(octokit, repo, owner) {
     var bumpType;
     try {
         bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
+        console.log(bumpType);
     } catch (e) {
         console.log("ERROR: The event data given to the action by Github didn't contain `head_commit`. This action should only be used on pull requests.");
         throw e;
