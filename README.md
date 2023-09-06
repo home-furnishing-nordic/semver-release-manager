@@ -57,6 +57,4 @@ If no commit message contains any information, then **default_bump** will be use
 
 There is an NPM build script available for use with `npm run build`. This will bundle up the index.js into a standalone, well, bundle. 
 
-The github action makes use of this bundle. If you contribute without running and committing the build, your changes will not be effective.
-
-You can run the build script `build.sh` to automate this process.
+The github action makes use of this bundle. If you push without running and committing the build, your changes will not be effective.
