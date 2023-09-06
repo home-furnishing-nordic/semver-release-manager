@@ -96982,6 +96982,8 @@ function bumpVersionTokens(tokens, type = null) {
         throw new Error('Bumps only array tokens');
     }
 
+    console.log(tokens);
+
     if (typeof tokens[0] == "undefined") {
         throw new Error('Major token undefined')
     }
@@ -96998,7 +97000,6 @@ function bumpVersionTokens(tokens, type = null) {
     if (!['major', 'minor', 'patch', 'none'].includes(defaultType)) {
         throw new Error('Invalid default bump type')
     }
-    console.log("Bump type is ".concat(type));
 
     switch (type) {
         case 'major':
@@ -97023,7 +97024,7 @@ function bumpVersionTokens(tokens, type = null) {
     }
 
     console.log('Bumping version. Selected type: ' + type);
-
+    console.log(tokens);
     return tokens;
 }
 
