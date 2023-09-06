@@ -33,18 +33,23 @@ async function run() {
         const message = getMessage(commits, lastTag);
 
         console.log(`Creating Tag: ${newTag}`);
-        const tag = await octokit.git.createTag({
-            ...context.repo,
-            tag: newTag,
-            object: GITHUB_SHA,
-            message: message,
-            type: 'commit',
-            tagger: {
-                name: context.payload.pusher.name,
-                email: context.payload.pusher.email,
-                date: time,
-            }
-        });
+        try {
+            const tag = await octokit.git.createTag({
+                ...context.repo,
+                tag: newTag,
+                object: GITHUB_SHA,
+                message: message,
+                type: 'commit',
+                tagger: {
+                    name: context.payload.pusher.name,
+                    email: context.payload.pusher.email,
+                    date: time,
+                }
+            });
+        } catch(e) {
+            console.log(context);
+            throw e;
+        }
 
         console.log(`Creating reference for Tag: ${newTag}`);
         await octokit.git.createRef({
