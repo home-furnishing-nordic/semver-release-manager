@@ -1,13 +1,17 @@
+console.log("Setting requirements");
 const {context, GitHub} = require('@actions/github');
 const core = require('@actions/core');
+console.log("Requires set");
 
 async function run() {
     try {
+        console.log("Attempting to set consts");
         const token = core.getInput('github_token', {required: true});
         const repo = context.repo.repo;
         const owner = context.repo.owner;
         const time = (new Date()).toISOString();
         const {GITHUB_REF, GITHUB_SHA} = process.env;
+        console.log("Consts set");
 
         if (!GITHUB_REF) {
             core.setFailed("Missing GITHUB_REF");
@@ -18,10 +22,10 @@ async function run() {
             core.setFailed("Missing GITHUB_SHA");
             return;
         }
-
+        console.log("Initialising github interface");
         const octokit = new GitHub(token);
 
-        console.log(`Start generating tag`);
+        console.log(`Github initialised; Start generating tag`);
         const {lastTag, newTag, preRelease} = await generateTag(octokit, repo, owner);
 
         console.log(`Start fetching commits`);
@@ -197,5 +201,6 @@ async function generateTag(octokit, repo, owner) {
     }
 }
 
+console.log("Start up recieved");
 run();
-
+console.log("Ending");
