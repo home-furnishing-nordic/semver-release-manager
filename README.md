@@ -2,6 +2,8 @@
 
 A Github Action to automatically bump tag version and generate release on your master branch on each commit with the latest SemVer formatted version.
 
+This action can only be ran on pull requests. It will not work with workflow dispatch, or pushes to the main branch.
+
 ## Usage
 
 ```yaml
@@ -50,3 +52,11 @@ The action will parse the new commits since the last tag using pattern
 ```#release-{BumpType}```
 
 If no commit message contains any information, then **default_bump** will be used.
+
+# Contributing
+
+There is an NPM build script available for use with `npm run build`. This will bundle up the index.js into a standalone, well, bundle. 
+
+The github action makes use of this bundle. If you contribute without running and committing the build, your changes will not be effective.
+
+You can run the build script `build.sh` to automate this process.
