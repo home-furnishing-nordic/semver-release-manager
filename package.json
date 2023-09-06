@@ -4,7 +4,8 @@
   "description": "semver-release-manager",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,10 @@
     "@actions/core": "^1.9.1",
     "@actions/exec": "^1.0.4",
     "@actions/github": "^2.2.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.4",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.1"
   }
 }

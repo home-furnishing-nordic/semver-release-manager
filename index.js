@@ -1,17 +1,13 @@
-console.log("Setting requirements");
 const {context, GitHub} = require('@actions/github');
 const core = require('@actions/core');
-console.log("Requires set");
 
 async function run() {
     try {
-        console.log("Attempting to set consts");
         const token = core.getInput('github_token', {required: true});
         const repo = context.repo.repo;
         const owner = context.repo.owner;
         const time = (new Date()).toISOString();
         const {GITHUB_REF, GITHUB_SHA} = process.env;
-        console.log("Consts set");
 
         if (!GITHUB_REF) {
             core.setFailed("Missing GITHUB_REF");
@@ -168,7 +164,7 @@ async function generateTag(octokit, repo, owner) {
         };
         console.log('There are no tags found, using init tag: ' + defaultTag);
     } else {
-        console.log('Last tag info received: ' + listTag.name);
+        console.log('Last tag info received: ' + lastTag.name);
     }
 
     let dirtname = lastTag.name;
@@ -177,7 +173,12 @@ async function generateTag(octokit, repo, owner) {
         dirtname = dirtname.substring(1);
     }
 
-    let bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
+    try {
+        let bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
+    } catch (e) {
+        console.log("ERROR: The event data given to the action by Github didn't contain `head_commit`. This action should only be used on pull requests.");
+        throw e;
+    }
     if (bumpType instanceof Array) {
         //remove #release-  part
         bumpType = bumpType[0].substring(9);
@@ -203,4 +204,3 @@ async function generateTag(octokit, repo, owner) {
 
 console.log("Start up recieved");
 run();
-console.log("Ending");
