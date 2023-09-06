@@ -97056,13 +97056,14 @@ async function generateTag(octokit, repo, owner) {
         dirtname = dirtname.substring(1);
     }
 
-    let bumpType;
+    var bumpType;
     try {
         bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
     } catch (e) {
         console.log("ERROR: The event data given to the action by Github didn't contain `head_commit`. This action should only be used on pull requests.");
         throw e;
     }
+    console.log(bumpType);
     if (bumpType instanceof Array) {
         //remove #release-  part
         bumpType = bumpType[0].substring(9);
