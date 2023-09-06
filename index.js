@@ -33,8 +33,9 @@ async function run() {
         const message = getMessage(commits, lastTag);
 
         console.log(`Creating Tag: ${newTag}`);
+        let tag;
         try {
-            const tag = await octokit.git.createTag({
+            tag = await octokit.git.createTag({
                 ...context.repo,
                 tag: newTag,
                 object: GITHUB_SHA,
@@ -178,8 +179,9 @@ async function generateTag(octokit, repo, owner) {
         dirtname = dirtname.substring(1);
     }
 
+    let bumpType;
     try {
-        let bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
+        bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
     } catch (e) {
         console.log("ERROR: The event data given to the action by Github didn't contain `head_commit`. This action should only be used on pull requests.");
         throw e;
