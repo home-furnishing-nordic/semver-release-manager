@@ -207,10 +207,5 @@ async function generateTag(octokit, repo, owner) {
 }
 
 console.log("Start up received");
-try {
-    run();
-} catch (e) {
-    console.log(e);
-    console.log(e.stack);
-    throw e;
-}
+run();
+
