@@ -63,8 +63,9 @@ async function run() {
             prerelease: preRelease,
         });
 
-        core.setOutput("time", time);
         core.setOutput("new_tag", newTag);
+        core.setOutput("time", time);
+
 
     } catch (error) {
         core.setFailed(error.message);
