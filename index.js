@@ -18,10 +18,10 @@ async function run() {
             core.setFailed("Missing GITHUB_SHA");
             return;
         }
-
+        console.log("Initialising github interface");
         const octokit = new GitHub(token);
 
-        console.log(`Start generating tag`);
+        console.log(`Github initialised; Start generating tag`);
         const {lastTag, newTag, preRelease} = await generateTag(octokit, repo, owner);
 
         console.log(`Start fetching commits`);
@@ -65,6 +65,8 @@ async function run() {
 
         core.setOutput("new_tag", newTag);
         core.setOutput("time", time);
+
+
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -98,6 +100,8 @@ function bumpVersionTokens(tokens, type = null) {
     if (!tokens instanceof Array) {
         throw new Error('Bumps only array tokens');
     }
+
+    console.log('Bumping version tokens from: ' + tokens.join('.'));
 
     if (typeof tokens[0] == "undefined") {
         throw new Error('Major token undefined')
@@ -138,8 +142,7 @@ function bumpVersionTokens(tokens, type = null) {
             return bumpVersionTokens(tokens, defaultType);
     }
 
-    console.log('Bumping version. Selected type: ' + type);
-
+    console.log('Bumping version using '+type+', to '+tokens.join('.'));
     return tokens;
 }
 
@@ -164,7 +167,7 @@ async function generateTag(octokit, repo, owner) {
         };
         console.log('There are no tags found, using init tag: ' + defaultTag);
     } else {
-        console.log('Last tag info received: ' + listTag.name);
+        console.log('Last tag info received: ' + lastTag.name);
     }
 
     let dirtname = lastTag.name;
@@ -173,7 +176,14 @@ async function generateTag(octokit, repo, owner) {
         dirtname = dirtname.substring(1);
     }
 
-    let bumpType = context.payload.head_commit.message.match(/\#release-\w+/gm);
+    let bumpType;
+    try {
+        bumpType = context.payload.head_commit.message.match(/#release-\w+/gm);
+    } catch (e) {
+        console.log('No "head_commit" in event.This is likely die to the event not being a PR, but something else');
+        throw e
+    }
+
     if (bumpType instanceof Array) {
         //remove #release-  part
         bumpType = bumpType[0].substring(9);
@@ -182,7 +192,7 @@ async function generateTag(octokit, repo, owner) {
     let tokens = dirtname.split('.');
     // bump tag version
     if (!defaultTag) {
-        const tokens = bumpVersionTokens(dirtname.split('.'), bumpType);
+        tokens = bumpVersionTokens(dirtname.split('.'), bumpType);
     }
 
     // check first symbol after v in
@@ -197,5 +207,6 @@ async function generateTag(octokit, repo, owner) {
     }
 }
 
+console.log("Start up received");
 run();
 
